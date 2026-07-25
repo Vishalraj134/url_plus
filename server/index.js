@@ -36,8 +36,12 @@ app.use((err, req, res, _next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Page Pulse running on http://localhost:${PORT}`);
-});
+// Only start the HTTP server when run directly (e.g. `node server/index.js` or Railway).
+// When imported as a module (e.g. by Vercel serverless), skip listen() — Vercel handles it.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Page Pulse running on http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
