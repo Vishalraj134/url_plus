@@ -13,15 +13,18 @@ const PORT = process.env.PORT || 3000;
 // Parse incoming JSON bodies
 app.use(express.json());
 
-// Serve the frontend from the /public directory
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Resolve absolute path to the public directory — works in both local and Vercel environments
+const PUBLIC_DIR = path.resolve(__dirname, '..', 'public');
+
+// Serve the frontend static files (HTML, CSS, JS)
+app.use(express.static(PUBLIC_DIR));
 
 // API routes
 app.use('/api/audit', auditRouter);
 
 // Fallback: serve index.html for any unmatched route (single-page app behaviour)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 // Global error handler — ensures no unhandled exception leaks a stack trace
