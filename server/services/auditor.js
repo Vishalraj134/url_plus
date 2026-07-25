@@ -10,7 +10,7 @@ const cheerio = require('cheerio');
 const { AuditError, ErrorCodes } = require('../utils/errors');
 
 /** Maximum time (ms) to wait for the target page to respond */
-const FETCH_TIMEOUT_MS = 9000;
+const FETCH_TIMEOUT_MS = 7000;
 
 /**
  * Fetches the URL and returns a parsed audit report.
