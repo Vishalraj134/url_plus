@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Pulse — URL Audit Tool</title>
+  <meta name="description" content="Instantly audit any webpage: HTTP status, response time, SEO meta, headings, image accessibility, and word count." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════ -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <div class="logo" aria-label="Page Pulse logo">
+        <span class="logo-icon" aria-hidden="true">⚡</span>
+        <span class="logo-text">Page<strong>Pulse</strong></span>
+      </div>
+      <p class="tagline">Instant web page health audit</p>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════════ -->
+  <main class="main" role="main">
+
+    <!-- Audit Form Card -->
+    <section class="card audit-card" aria-labelledby="form-heading">
+      <h1 id="form-heading" class="card-title">Audit a URL</h1>
+      <p class="card-subtitle">Enter any public webpage URL and get a full health report in seconds.</p>
+
+      <form id="audit-form" class="audit-form" novalidate>
+        <div class="input-group">
+          <label for="url-input" class="input-label">Page URL</label>
+          <div class="input-row">
+            <input
+              id="url-input"
+              type="url"
+              class="url-input"
+              placeholder="https://example.com"
+              autocomplete="url"
+              spellcheck="false"
+              aria-describedby="url-hint"
+              required
+            />
+            <button id="submit-btn" type="submit" class="btn-primary" aria-label="Run audit">
+              <span class="btn-label">Audit</span>
+              <span class="btn-icon" aria-hidden="true">→</span>
+            </button>
+          </div>
+          <p id="url-hint" class="input-hint">Must start with <code>http://</code> or <code>https://</code></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- Loading State (hidden by default) -->
+    <section id="loading-state" class="card loading-card" hidden aria-live="polite" aria-label="Loading">
+      <div class="spinner" role="status">
+        <span class="spinner-ring"></span>
+        <span class="spinner-ring"></span>
+        <span class="spinner-ring"></span>
+      </div>
+      <p class="loading-text">Auditing page<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
+      <p class="loading-sub" id="loading-url-display"></p>
+    </section>
+
+    <!-- Error State (hidden by default) -->
+    <section id="error-state" class="card error-card" hidden role="alert" aria-live="assertive">
+      <div class="error-icon" aria-hidden="true">✕</div>
+      <h2 class="error-title">Audit Failed</h2>
+      <p id="error-message" class="error-message"></p>
+      <p id="error-code" class="error-code"></p>
+    </section>
+
+    <!-- Results (hidden by default) -->
+    <section id="results-section" class="results" hidden aria-label="Audit results">
+
+      <!-- Results Header -->
+      <div class="results-header card">
+        <div class="results-meta">
+          <span class="results-label">Audited URL</span>
+          <a id="result-url" href="#" target="_blank" rel="noopener noreferrer" class="result-url-link"></a>
+        </div>
+        <div class="results-meta">
+          <span class="results-label">Audited at</span>
+          <span id="result-audited-at" class="results-value"></span>
+        </div>
+      </div>
+
+      <!-- Metric Cards Grid -->
+      <div class="metrics-grid" role="list">
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">🌐</div>
+          <div class="metric-body">
+            <span class="metric-label">HTTP Status</span>
+            <span id="m-http-status" class="metric-value"></span>
+          </div>
+        </article>
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">⏱</div>
+          <div class="metric-body">
+            <span class="metric-label">Response Time</span>
+            <span id="m-response-time" class="metric-value"></span>
+          </div>
+        </article>
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">📄</div>
+          <div class="metric-body">
+            <span class="metric-label">Page Title</span>
+            <span id="m-page-title" class="metric-value metric-value--text"></span>
+          </div>
+        </article>
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">📝</div>
+          <div class="metric-body">
+            <span class="metric-label">Meta Description</span>
+            <span id="m-meta-desc" class="metric-value metric-value--text"></span>
+          </div>
+        </article>
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">🔤</div>
+          <div class="metric-body">
+            <span class="metric-label">H1 Tags</span>
+            <span id="m-h1-count" class="metric-value"></span>
+          </div>
+        </article>
+
+        <article class="metric-card" role="listitem">
+          <div class="metric-icon" aria-hidden="true">🖼</div>
+          <div class="metric-body">
+            <span class="metric-label">Images Missing Alt</span>
+            <span id="m-img-alt" class="metric-value"></span>
+          </div>
+        </article>
+
+        <article class="metric-card metric-card--wide" role="listitem">
+          <div class="metric-icon" aria-hidden="true">📊</div>
+          <div class="metric-body">
+            <span class="metric-label">Approximate Word Count</span>
+            <span id="m-word-count" class="metric-value"></span>
+          </div>
+        </article>
+
+      </div><!-- /.metrics-grid -->
+    </section><!-- /#results-section -->
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <p class="footer-text">
+      <a href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer" class="footer-link">
+        Built for Digital Heroes Training Task
+      </a>
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "page-pulse",
+  "version": "1.0.0",
+  "description": "A professional URL audit tool — checks HTTP status, response time, SEO meta, headings, and image accessibility.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "license": "MIT"
+}
